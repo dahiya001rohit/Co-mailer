@@ -7,8 +7,8 @@ const SendEmails = () => {
     const [html, setHtml] = useState(null)
     return (
         <div className='w-[80vw] h-[85vh] flex items-start justify-center mx-[10vw] mt-[11vh] gap-[2vw] mb-[9vh]'>
-        <SendEmailsLeft setHtml = {setHtml}/>
-        <SendEmailsRight html = {html}/>
+        <SendEmailsLeft html = {html} setHtml = {setHtml}/>
+        <SendEmailsRight html = {html} setHtml = {setHtml}/>
         </div>
     )
 }

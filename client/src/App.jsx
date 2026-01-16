@@ -46,7 +46,7 @@ const App = () => {
           }
         />
       </Routes>
-      {(location.pathname !== '/login' && location.pathname !== '/signup') && <Unlogged2 />}
+      {/* {(location.pathname !== '/login' && location.pathname !== '/signup') && <Unlogged2 />} */}
     </div>
   );
 };

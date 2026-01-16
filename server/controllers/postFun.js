@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const Users = require('../models/users')
 const { makeToken } = require('./JWT')
+const transporter = require('../mailer')
 
 async function signUpUser(req, res) {
     const { name, email, password } = req.body
@@ -38,7 +39,27 @@ async function logInUser(req, res) {
     }
 }
 
+async function sendemail(req, res) {
+    console.log(`reached`)
+    const { to, subject, html} = req.body
+    console.log({ to, subject, html})
+    try{
+        const email = await transporter.sendMail({
+            from: '"Rohit" <rohit830770@gmail.com>',
+            to: to,
+            subject: subject,
+            html: html
+        })
+        console.log(`working good`)
+        return res.json({data: `Success`})
+    } catch(err){
+        console.log(err)
+        return res.json({error: `An error occured`})
+    }
+}
+
 module.exports = {
     signUpUser,
     logInUser,
+    sendemail,
 }

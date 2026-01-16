@@ -1,25 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FileUp } from 'lucide-react';
 import { SiGooglegemini } from "react-icons/si";
 import api from '../../utils/api';
 import Loading from '../../utils/Loading';
 
-const SendEmailsLeft = ({ setHtml }) => {
+const SendEmailsLeft = ({ html, setHtml }) => {
+    const [to, setTo] = useState('')
     const [loading, setLoading] = useState(false);
     const [prompt, setPrompt] = useState('');
     const [subject, setSubject] = useState('');
     const [error, setError] = useState('');
 
-    const handleGenerate = async (e) => {
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if(!to || !subject || !html || to.trim() === '' || subject.trim() === '') return
         setLoading(true);
+        try {
+            const response = await api.post('/send-email', {
+                to: to,
+                subject: subject,
+                html: html,
+            });
+            if (response.data.error) {
+                setError(response.data.error);
+                setLoading(false);
+                alert(`An error occurred: ${response.data.error}`);
+                return;
+            }
+            console.log(`Done`);
+            setLoading(false);
+            // setHtml(null);
+            // setSubject('');
+        } catch (error) {
+            setLoading(false);
+            const errorMessage = error.response?.data?.message || error.message || error;
+            setError(errorMessage);
+            alert(`An error occurred: ${errorMessage}`);
+        }
+    }    
+    const handleGenerate = async (e) => {
         e.preventDefault();
         if (!prompt || prompt.trim() === '') return;
+        setLoading(true);
         try {
             const response = await api.post('/gemini', { prompt: prompt });
             if (response.data.error) {
                 setError(response.data.error);
                 setLoading(false);
-                alert(`An error occured: ${error}`);
+                alert(`An error occurred: ${response.data.error}`);
                 return;
             }
             console.log(`Done`);
@@ -28,8 +56,9 @@ const SendEmailsLeft = ({ setHtml }) => {
             setSubject(response.data.subject);
         } catch (error) {
             setLoading(false);
-            setError(error);
-            alert(`An error occured: ${error}`);
+            const errorMessage = error.response?.data?.message || error.message || error;
+            setError(errorMessage);
+            alert(`An error occurred: ${errorMessage}`);
         }
     }
 
@@ -55,9 +84,9 @@ const SendEmailsLeft = ({ setHtml }) => {
                 </div>
             </form>
 
-            <form className='mx-[3vw] mt-[2vh]' >
+            <form className='mx-[3vw] mt-[2vh]' onSubmit={handleSend}>
                 <h1 className='text-sm font-mono'>To:</h1>
-                <input type="text" className='w-[25vw] border mx-1 font-mono text-[0.9vw] py-[0.5vh] pl-[0.5vw] bg-white mt-[2vh]' placeholder="Receiver's Email" />
+                <input type="text" className='w-[25vw] border mx-1 font-mono text-[0.9vw] py-[0.5vh] pl-[0.5vw] bg-white mt-[2vh]' placeholder="Receiver's Email" value={to} onChange={(e) => setTo(e.target.value)}/>
                 <h1 className='text-sm font-mono mt-[2vh]'>Subject:</h1>
                 <input 
                     type="text" 
@@ -83,9 +112,9 @@ const SendEmailsLeft = ({ setHtml }) => {
                     </label>
                 </div>
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <h1 className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800'>
-                        <span className='font-mono font-thin'>Send</span>
-                    </h1>
+                    <button type='submit' className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer'>
+                        <span className='font-mono font-thin'>{loading ? <Loading /> : 'Send'}</span>
+                    </button>
                 </div>
             </form>
         </div>

@@ -3,13 +3,17 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-html";
 import "ace-builds/src-noconflict/theme-monokai";
 
-const SendEmailsRight = ({ html }) => {
+const SendEmailsRight = ({ html, setHtml }) => {
     const [value, setValue] = useState(html);
     const [mode, setMode] = useState('preview');
 
     useEffect(() => {
       setValue(html);
     }, [html]);
+
+    useEffect(() => {
+      setHtml(value);
+    }, [value]);
 
     return (
         <div className='w-6/10 h-full flex justify-start flex-col items-center gap-[2vh]'>

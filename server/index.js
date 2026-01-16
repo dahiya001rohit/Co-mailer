@@ -22,7 +22,7 @@ app.use(express.json())
 app.get('/me', auth, (req, res) => {
     return res.json({ user: req.user })
 })
-app.post('/gemini', generateHtml)
+app.post('/gemini',auth ,generateHtml)
 app.use('/', postRouter)
 
 
