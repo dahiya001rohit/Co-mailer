@@ -3,6 +3,8 @@ const cors = require('cors')
 const { connectToMongoDb } = require('./connection')
 const app = express()
 const postRouter = require('./routers/post')
+const { auth } = require('./middlewares/auth')
+const { generateHtml } = require('./gemini')
 
 // Connecting Database
 connectToMongoDb('mongodb://127.0.0.1:27017/co-mailer')
@@ -17,8 +19,12 @@ connectToMongoDb('mongodb://127.0.0.1:27017/co-mailer')
 app.use(cors())
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
-
+app.get('/me', auth, (req, res) => {
+    return res.json({ user: req.user })
+})
+app.post('/gemini', generateHtml)
 app.use('/', postRouter)
+
 
 app.listen(7152, ()=>{
     console.log('started on port 7152')

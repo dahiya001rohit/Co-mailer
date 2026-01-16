@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken')
 const myJWTSecret = 'co-mailer-jwt-secert'
 function makeToken(user){
-    payload = {
+    const payload = {
         name: user.name,
         email: user.email
     }
@@ -11,7 +11,7 @@ function makeToken(user){
 }
 
 function verifyToken(token){
-    return JWT.verify(token)
+    return JWT.verify(token, myJWTSecret)
 }
 
 module.exports = {

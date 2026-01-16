@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import { Link } from 'react-router-dom'
+import api from '../../utils/api'
 
 const LoginForm = () => {
-    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
@@ -29,20 +28,20 @@ const LoginForm = () => {
             return
         }
         try {
-            const response = await axios.post('/api/login', {
+            const response = await api.post('/login', {
                 email: email,
                 password: password
             })
-            console.log('Response:', response.data)
             if (response.data.error) {
                 setError("Registration failed: " + response.data.error);
                 return;
             } else {
               setError("");
-              setName("");
               setEmail("");
               setPassword("");
-              alert("Welcome" + response.data.name)}
+              localStorage.setItem('token', response.data.token)
+              window.location.href = "/"
+            }
         } catch (error) {
             setError('Login failed: ' + error.message)
         }

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const Users = require('../models/users')
+const { makeToken } = require('./JWT')
 
 async function signUpUser(req, res) {
     const { name, email, password } = req.body
@@ -12,7 +13,9 @@ async function signUpUser(req, res) {
             email: email,
             password: hashPass 
         })
+        console.log(user)
         const token = makeToken(user)
+        console.log(token)
         return res.json({token: token})
     } catch (error) {
         return res.json({ error: `An error occured` })
@@ -26,8 +29,9 @@ async function logInUser(req, res) {
         console.log(user)
         if(!user) return res.json({ error: `No user, signup` })
         const isValidPass = await bcrypt.compare(password, user.password)
-        if(!isValidPass) res.json({ error: `Invalid Password` })
+        if(!isValidPass) return res.json({ error: `Invalid Password` })
         const token = makeToken(user)
+        console.log(token)
         return res.json({token: token})
     } catch (error) {
         return res.json({ error: `An error occured: ${error.message}` })
