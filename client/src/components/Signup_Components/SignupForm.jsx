@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
+import api from "../../utils/api";
 
-const GetStartedForm = () => {
+const SignupForm = () => {
+  const navigate = useNavigate()
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,12 +41,11 @@ const GetStartedForm = () => {
       return;
     }
     try {
-      const response = await axios.post("/api/signup", {
+      const response = await api.post("/signup", {
         name: name,
         email: email,
         password: password,
       });
-      console.log(response.data);
       if (response.data.error) {
         setError("Registration failed: " + response.data.error);
         return;
@@ -54,8 +54,8 @@ const GetStartedForm = () => {
         setName("");
         setEmail("");
         setPassword("");
-        // Show success message
-        alert(response.data.hashPass);
+        localStorage.setItem('token', response.data.token)
+        window.location.href = "/"
       }
     } catch (error) {
       setError("Registration failed: " + error.message);
@@ -131,4 +131,4 @@ const GetStartedForm = () => {
   );
 };
 
-export default GetStartedForm;
+export default SignupForm;
