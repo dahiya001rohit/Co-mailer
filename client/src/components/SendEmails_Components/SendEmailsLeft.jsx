@@ -1,15 +1,27 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { FileUp } from 'lucide-react';
 import { SiGooglegemini } from "react-icons/si";
 import api from '../../utils/api';
 import Loading from '../../utils/Loading';
+import { useRef } from 'react';
 
 const SendEmailsLeft = ({ html, setHtml }) => {
+    const fileInputRef = useRef(null)
+    const [attachment, setAttachment] = useState(null)
     const [to, setTo] = useState('')
     const [loading, setLoading] = useState(false);
     const [prompt, setPrompt] = useState('');
     const [subject, setSubject] = useState('');
     const [error, setError] = useState('');
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click()
+    }
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files)
+        setAttachment(files)
+    }
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -95,10 +107,17 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     value={subject} 
                     onChange={(e) => setSubject(e.target.value)} 
                 />
+                <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    style={{ display: 'none' }} 
+                    onChange={handleFileChange}
+                    multiple 
+                />
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <h1 className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800'>
-                        <FileUp size={18} strokeWidth={1} />
-                        <span className='font-mono font-thin'> Upload</span>
+                    <h1 className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800' onClick={handleUploadClick}>
+                        {attachment && attachment.length !== 0?null:<FileUp size={18} strokeWidth={1} />}
+                        <span className='font-mono font-thin'>{attachment && attachment.length !== 0?`${attachment.length} files added`:'Uplode'}</span>
                     </h1>
                 </div>
                 <div className='flex justify-around item-center mt-[2vh] font-mono text-xs'>
