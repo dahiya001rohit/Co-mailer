@@ -28,10 +28,19 @@ const SendEmailsLeft = ({ html, setHtml }) => {
         if(!to || !subject || !html || to.trim() === '' || subject.trim() === '') return
         setLoading(true);
         try {
-            const response = await api.post('/send-email', {
-                to: to,
-                subject: subject,
-                html: html,
+            const formData = new FormData()
+            formData.append('to', to)
+            formData.append('subject', subject)
+            formData.append('html', html)
+            console.log(`Done`);
+
+            if (attachment && attachment.length > 0){
+                attachment.forEach( file => {
+                    formData.append('attachments', file)
+                });
+            }
+             const response = await api.post('/send-email', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (response.data.error) {
                 setError(response.data.error);
