@@ -42,13 +42,19 @@ async function logInUser(req, res) {
 async function sendemail(req, res) {
     console.log(`reached`)
     const { to, subject, html} = req.body
-    console.log({ to, subject, html})
+    const files = req.files
+    console.log({ to, subject, html, files})
+
     try{
         const email = await transporter.sendMail({
             from: '"Rohit" <rohit830770@gmail.com>',
             to: to,
             subject: subject,
-            html: html
+            html: html,
+            attachments: req.files.map(file => ({
+                filename: file.originalname,
+                content: file.buffer,
+            }))
         })
         console.log(`working good`)
         return res.json({data: `Success`})
