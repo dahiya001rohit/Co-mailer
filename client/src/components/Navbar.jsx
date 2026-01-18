@@ -30,7 +30,7 @@ const Navbar = ({ isLogged, setIsLogged }) => {
       <div id='divElems' className='flex justify-between gap-[2vw]'>
         <Link to="/"><h5 className='text-sm px-[1vw] hover:text-blue-500'>Home</h5></Link>
         <Link to="/about"><h5 className='text-sm px-[1vw] hover:text-blue-500'>About Co-Mailer</h5></Link>
-        {isLogged && <h5 className='text-sm px-[1vw] hover:text-blue-500 cursor-pointer' onClick={handleLogout}>Profile</h5>}
+        {isLogged && <h5 className='text-sm px-[1vw] hover:text-blue-500 cursor-pointer' onClick={handleLogout}>Logout</h5>}
       </div>
       {isLogged ? (
         <Link to='/send-emails' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white'>Send Mails</Link>

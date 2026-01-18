@@ -6,14 +6,18 @@ const useAuth = () => {
     const [user, setUser] = useState(null)
     const [token, setToken] = useState(null)
 
+
     useEffect(() => {
         const t = localStorage.getItem('token')
         if (!t) return
         setToken(t)
-
         try {
-            const playload = JSON.parse(atob(t.split('.')[1]))
-            setUser(playload)
+            const payload = JSON.parse(atob(t.split('.')[1]))
+            if (payload.exp * 1000 < Date.now()) {
+                localStorage.removeItem('token')
+                return
+            }
+            setUser(payload)
         } catch (error) {
             localStorage.removeItem('token')
         }
@@ -21,6 +25,7 @@ const useAuth = () => {
 
     const logOut = () => {
         localStorage.removeItem("token")
+        localStorage.removeItem('appToken')
         setToken(null)
         setUser(null)
         navigate('/login')
