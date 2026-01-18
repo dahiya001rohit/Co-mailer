@@ -63,23 +63,49 @@ async function sendemail(req, res) {
     if(toSeperate === 'false'){
         try{
             console.log(`hi`)
-            const email = await transporter.sendMail({
-                from: user.name + ' <' + user.gmail + '>',
+            const sentEmail = await transporter.sendMail({
+                from: user.name + ' <' + user.email + '>',
                 to: to,
                 subject: subject,
                 html: html,
-                attachments: req.files.map(file => ({
+                attachments: files.map(file => ({
                     filename: file.originalname,
                     content: file.buffer,
                 }))
             })
-            console.log(email)
+            console.log(sentEmail)
             return res.json({data: `Success`})
         } catch(err){
             console.log(err)
             return res.json({error: `An error occured`})
         }
+    } else {
+        const recipients = to.split(',').map(email => email.trim())
+        for(let email of recipients){
+            const sanitizedEmail = email
+                .replace('@', '_')
+                .replace(/\./g, '_')
+                .toLowerCase()
 
+            const matchFile = files.filter(file => file.originalname.toLowerCase().includes(sanitizedEmail))
+
+            try{
+                console.log(`hi`)
+                const sentEmail = await transporter.sendMail({
+                    from: user.name + ' <' + user.email + '>',
+                    to: email,
+                    subject: subject,
+                    html: html,
+                    attachments: matchFile.map(file => ({
+                        filename: file.originalname,
+                        content: file.buffer,
+                    }))
+                })
+            } catch(err){
+                console.log(err)
+                return res.json({error: `An error occured`})
+            }
+        };
     }
     console.log(`hi`)
     return res.json({data: `Success`})
