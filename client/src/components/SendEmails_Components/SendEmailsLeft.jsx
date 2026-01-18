@@ -48,7 +48,7 @@ const SendEmailsLeft = ({ html, setHtml }) => {
             if (response.data.error) {
                 setError(response.data.error);
                 setLoading(false);
-                alert(`An error occurred: ${response.data.error}`);
+                alert(`An error occurred: ${response.data.error.message}`);
                 return;
             }
             console.log(`Done`);
@@ -87,8 +87,8 @@ const SendEmailsLeft = ({ html, setHtml }) => {
     }
 
     return (
-        <div className='w-4/10 h-full flex justify-start flex-col text-base items-center gap-[2vh] border rounded-4xl bg-blue-300'>
-            <div className='flex justify-center text-base items-center mt-[5vh] mx-[2vw]'>
+        <div className='w-4/10 h-full flex justify-start flex-col text-base items-center gap-[2vh] border rounded-4xl bg-blue-300 mt-2'>
+            <div className='flex justify-center text-base items-center mt-[5vh] mx-[2vw] text-center'>
                 <h1 className='text-xl font-mono'>Modify your emails<span className='italic font-bold'> Using AI </span>just at a <span className='italic font-bold'>CLICK.</span></h1>
             </div>
             <form className='mx-[3vw] mt-[2vh]' onSubmit={handleGenerate}>
@@ -101,8 +101,8 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     onChange={(e) => setPrompt(e.target.value)}
                 ></textarea>
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <button type='submit' className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800'>
-                        <span className='font-mono font-thin'>{loading ? <Loading /> : 'Generate'}</span>
+                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800'>
+                        {loading ? <Loading /> : 'Generate'}
                         {!loading && <SiGooglegemini />}
                     </button>
                 </div>
@@ -150,8 +150,8 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     </label>
                 </div>}
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <button type='submit' className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer'>
-                        <span className='font-mono font-thin'>{loading ? <Loading /> : 'Send'}</span>
+                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer'>
+                        {loading ? <Loading /> : 'Send'}
                     </button>
                 </div>
             </form>

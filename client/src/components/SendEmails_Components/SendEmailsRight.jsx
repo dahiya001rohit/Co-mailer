@@ -16,7 +16,7 @@ const SendEmailsRight = ({ html, setHtml }) => {
     }, [value]);
 
     return (
-        <div className='w-6/10 h-full flex justify-start flex-col items-center gap-[2vh]'>
+        <div className='w-6/10 h-full flex justify-start flex-col items-center gap-[2vh] mt-2'>
             <div className='flex justify-center flex-col items-center mt-[5vh]'>
                 <h1 className='text-xl mx-[2vw] font-mono'><span className='italic font-bold'>Preview </span>or<span className='italic font-bold'> Edit </span>your Generated Email.</h1>
             </div>

@@ -3,6 +3,7 @@ import useAuth from '../../hooks/useAuth'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
 import { useState } from 'react'
+import GuideForAppPass from './GuideForAppPass'
 
 const LoggedHome = () => {
   const { user } = useAuth()
@@ -47,31 +48,34 @@ const LoggedHome = () => {
 
 
   return (
-    <div className='w-full h-full flex justify-center flex-col text-base items-center'>
-      <div>
-        <h1 className='text-8xl mx-[2vw]'> WelCome Back <span className='italic underline'>{user?.name}.</span></h1>
+      <div className='w-full h-[90vh] flex justify-center flex-col text-base items-center'>
+        <div>
+          <h1 className='text-8xl mx-[2vw]'> WelCome Back <span className='italic underline'>{user?.name}.</span></h1>
+        </div>
+        <div>
+            <h5 className='text-sm mx-[4vw] my-[3vh] font-mono' >Wishing you a good day, lets help us in making your day easier.</h5> 
+        </div>
+        {!appToken && <div>
+          <form className='flex gap-2' onSubmit={handleSubmit}>
+            <input type="text" className='w-[20vw] text-base bg-white border font-mono px-[0.3vw]' placeholder='16 digit app password...' value={appPass} onChange={e => setAppPass(e.target.value)}/>
+            <button type='submit' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Add APP-PASS</button>
+          </form>
+        </div>}
+        {error && (
+              <div className="text-red-500 font-thin flex flex-col justify-center items-center ">
+                {error}
+              </div>
+            )}
+        {!appToken && <div>
+            <h5 className='text-xs mx-[4vw] my-[3vh] font-mono' >Enter your app pass, if you need steps to get your app password scroll down.</h5> 
+        </div>}
+        {appToken && <div className='mt-[2vh]'>
+          <Link to='/send-emails'className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Send Mails</Link>
+        </div>}
+        
+        {/* Show guide only when user hasn't provided app password */}
+        {/* {!appToken && <GuideForAppPass />} */}
       </div>
-      <div>
-           <h5 className='text-sm mx-[4vw] my-[3vh] font-mono' >Wishing you a good day, lets help us in making your day easier.</h5> 
-      </div>
-      {!appToken && <div>
-        <form className='flex gap-2' onSubmit={handleSubmit}>
-          <input type="text" className='w-[20vw] text-base bg-white border font-mono px-[0.3vw]' placeholder='16 digit app password...' value={appPass} onChange={e => setAppPass(e.target.value)}/>
-          <button type='submit' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Add APP-PASS</button>
-        </form>
-      </div>}
-      {error && (
-            <div className="text-red-500 font-thin flex flex-col justify-center items-center ">
-              {error}
-            </div>
-          )}
-      {!appToken && <div>
-           <h5 className='text-xs mx-[4vw] my-[3vh] font-mono' >Enter your app pass, if you need steps to get your app password scroll down.</h5> 
-      </div>}
-      {appToken && <div className='mt-[2vh]'>
-        <Link to='/send-emails'className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Send Mails</Link>
-      </div>}
-    </div>
   )
 }
 

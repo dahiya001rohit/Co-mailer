@@ -8,11 +8,12 @@ import Login from './components/Login';
 import api from './utils/api';
 import SendEmails from './components/SendEmails';
 import ProtactedRoute from './components/ProtactedRoute';
+import Footer from './components/Footer';
+import About from './components/About';
 
 const App = () => {
   const [isLogged, setIsLogged] = useState(false);
-  const location = useLocation();
-
+  const location = useLocation()
   useEffect(() => {
     const fetchUser = async () => {
       if (!localStorage.getItem('token')) return;
@@ -45,8 +46,10 @@ const App = () => {
             </ProtactedRoute>
           }
         />
+        <Route path='/about' element={<About/>} />
       </Routes>
-      {/* {(location.pathname !== '/login' && location.pathname !== '/signup') && <Unlogged2 />} */}
+      {(!isLogged && location.pathname !== '/about' )&& <Unlogged2 />}
+      <Footer/>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from 'react'
 import HeadingText from './Home_Components/HeadingText'
 import HeadingImg from './Home_Components/HeadingImg'
 import LoggedHome from './Home_Components/LoggedHomeText'
+import GuideForAppPass from './Home_Components/GuideForAppPass'
 
 const Home = ({isLogged}) => {
   return (
@@ -12,8 +13,9 @@ const Home = ({isLogged}) => {
         <HeadingImg/>
       </div>
     :
-      <div className='w-[80vw] h-[80vh] flex items-start justify-center mx-[10vw] mt-[11vh] gap-[3vw] mb-[9vh]'>
+      <div className='w-[80vw] h-full flex flex-col items-center justify-center mx-[10vw] mt-[11vh] gap-[3vw] mb-[9vh]'>
         <LoggedHome/>
+        <GuideForAppPass/>
       </div>}
     </>
   )
