@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
 const Users = require('../models/users')
-const { makeToken } = require('./JWT')
-const transporter = require('../mailer')
+const { makeToken, makeAppPassToken } = require('./JWT')
+const { encrypt, decrypt} = require('./crypto')
+const { createTransporter } = require('./mailer')
 
 async function signUpUser(req, res) {
     const { name, email, password } = req.body
@@ -39,33 +40,54 @@ async function logInUser(req, res) {
     }
 }
 
+async function saveAppPass(req, res) {
+    console.log(`reached`)
+    const { appPass } = req.body
+    encryptedAppPass = encrypt(appPass)
+    console.log(encryptedAppPass)
+    const appToken = makeAppPassToken(encryptedAppPass)
+    console.log(appToken)
+    return res.json({appToken})
+}
+
 async function sendemail(req, res) {
     console.log(`reached`)
-    const { to, subject, html} = req.body
+    const { to, subject, html, toSeperate} = req.body
     const files = req.files
-    console.log({ to, subject, html, files})
+    const user = req.user
+    const encryptedAppPass = req.encryptedAppPass
+    const appPass = decrypt(encryptedAppPass)
+    const transporter = createTransporter(user.email, appPass)
+    console.log({ to, subject, html, files, toSeperate})
 
-    try{
-        const email = await transporter.sendMail({
-            from: '"Rohit" <rohit830770@gmail.com>',
-            to: to,
-            subject: subject,
-            html: html,
-            attachments: req.files.map(file => ({
-                filename: file.originalname,
-                content: file.buffer,
-            }))
-        })
-        console.log(`working good`)
-        return res.json({data: `Success`})
-    } catch(err){
-        console.log(err)
-        return res.json({error: `An error occured`})
+    if(toSeperate === 'false'){
+        try{
+            console.log(`hi`)
+            const email = await transporter.sendMail({
+                from: user.name + ' <' + user.gmail + '>',
+                to: to,
+                subject: subject,
+                html: html,
+                attachments: req.files.map(file => ({
+                    filename: file.originalname,
+                    content: file.buffer,
+                }))
+            })
+            console.log(email)
+            return res.json({data: `Success`})
+        } catch(err){
+            console.log(err)
+            return res.json({error: `An error occured`})
+        }
+
     }
+    console.log(`hi`)
+    return res.json({data: `Success`})
 }
 
 module.exports = {
     signUpUser,
     logInUser,
+    saveAppPass,
     sendemail,
 }
