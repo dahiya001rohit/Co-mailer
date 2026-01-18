@@ -6,6 +6,8 @@ import Loading from '../../utils/Loading';
 import { useRef } from 'react';
 
 const SendEmailsLeft = ({ html, setHtml }) => {
+    const [showUpload, setShowUpload] = useState(false)
+    const [toSeperate, setToSeperate] = useState(false)
     const fileInputRef = useRef(null)
     const [attachment, setAttachment] = useState(null)
     const [to, setTo] = useState('')
@@ -32,6 +34,7 @@ const SendEmailsLeft = ({ html, setHtml }) => {
             formData.append('to', to)
             formData.append('subject', subject)
             formData.append('html', html)
+            formData.append('toSeperate', toSeperate)
             console.log(`Done`);
 
             if (attachment && attachment.length > 0){
@@ -84,7 +87,7 @@ const SendEmailsLeft = ({ html, setHtml }) => {
     }
 
     return (
-        <div className='w-4/10 h-full flex justify-start flex-col text-base items-center gap-[5vh] border rounded-4xl bg-blue-300'>
+        <div className='w-4/10 h-full flex justify-start flex-col text-base items-center gap-[2vh] border rounded-4xl bg-blue-300'>
             <div className='flex justify-center text-base items-center mt-[5vh] mx-[2vw]'>
                 <h1 className='text-xl font-mono'>Modify your emails<span className='italic font-bold'> Using AI </span>just at a <span className='italic font-bold'>CLICK.</span></h1>
             </div>
@@ -116,6 +119,15 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     value={subject} 
                     onChange={(e) => setSubject(e.target.value)} 
                 />
+                <div className='flex justify-around item-center mt-[1vh] font-mono text-xs'>
+                    <label className='flex justify-around item-center'>
+                        <input type="checkbox" className='w-[0.8vw]' checked = {showUpload} onChange={e => {
+                            setShowUpload(e.target.checked)
+                            if(!e.target.checked) setAttachment(null)
+                        }} />
+                        <h5>Send Files</h5>
+                    </label>
+                </div>
                 <input 
                     type="file" 
                     ref={fileInputRef} 
@@ -123,22 +135,20 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     onChange={handleFileChange}
                     multiple 
                 />
-                <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
+                {showUpload && <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
                     <h1 className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800' onClick={handleUploadClick}>
                         {attachment && attachment.length !== 0?null:<FileUp size={18} strokeWidth={1} />}
-                        <span className='font-mono font-thin'>{attachment && attachment.length !== 0?`${attachment.length} files added`:'Uplode'}</span>
+                        <span className='font-mono font-thin'>{attachment && attachment.length !== 0?`${attachment.length} files added`:'Upload'}</span>
                     </h1>
-                </div>
-                <div className='flex justify-around item-center mt-[2vh] font-mono text-xs'>
+                </div>}
+                {showUpload && <div className='flex justify-around item-center mt-[1vh] font-mono text-xs'>
                     <label className='flex justify-around item-center'>
-                        <input type="checkbox" className='w-[0.8vw]' />
-                        <h5>To all</h5>
+                        <input type="checkbox" className='w-[0.8vw]' checked = {toSeperate} onChange={e => {
+                            setToSeperate(e.target.checked)
+                        }} />
+                        <h5>To seperate Reciver</h5>
                     </label>
-                    <label className='flex justify-around item-center'>
-                        <input type="checkbox" className='w-[0.8vw]' />
-                        <h5>Individually</h5>
-                    </label>
-                </div>
+                </div>}
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
                     <button type='submit' className='text-sm flex gap-1 font-mono px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer'>
                         <span className='font-mono font-thin'>{loading ? <Loading /> : 'Send'}</span>

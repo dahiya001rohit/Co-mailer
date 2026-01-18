@@ -6,8 +6,13 @@ const api = axios.create({
 
 api.interceptors.request.use((req) => {
     const token = localStorage.getItem('token')
+    const appToken = localStorage.getItem('appToken')
+    
     if(token){
         req.headers.Authorization = `Bearer ${token}`
+    }
+    if(appToken){
+        req.headers['X-App-Token'] = appToken
     }
     return req
 })
