@@ -4,7 +4,7 @@ const { connectToMongoDb } = require('./connection')
 const app = express()
 const postRouter = require('./routers/post')
 const { auth } = require('./middlewares/auth')
-const { generateHtml } = require('./gemini')
+const { generateHtml } = require('./controllers/gemini')
 
 // Connecting Database
 connectToMongoDb('mongodb://127.0.0.1:27017/co-mailer')

@@ -2,7 +2,7 @@ import React from 'react'
 
 const GuideForAppPass = () => {
   return (
-    <div className='w-[90vw] h-[90vh] bg-blue-50 flex flex-col items-center justify-between gap-1 py-[4vh] mb-[0vh]'>
+    <div className='w-[90vw] h-[90vh] bg-blue-50 flex flex-col items-center justify-between gap-1 py-[4vh]'>
       <div className='w-[80vw]'>
         <h2 className='text-xl mb-[3vh] text-center font-thin font-mono'>How to Get Your Google App Password</h2>
         

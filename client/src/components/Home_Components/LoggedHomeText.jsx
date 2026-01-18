@@ -3,9 +3,20 @@ import useAuth from '../../hooks/useAuth'
 import { Link } from 'react-router-dom'
 import api from '../../utils/api'
 import { useState } from 'react'
-import GuideForAppPass from './GuideForAppPass'
+import { useRef } from 'react'
+import { useEffect } from 'react'
 
 const LoggedHome = () => {
+  const formData = new FormData()
+  const templateInputRef = useRef(null)
+  const handleClick = () => {
+    templateInputRef.current.click()
+  }
+  const [template, setTemplate] = useState(null)
+  const handleTemplateChange = (e) => {
+        const newTemplate = e.target.files[0]
+        setTemplate(newTemplate)
+    }
   const { user } = useAuth()
   if(user){
     console.log(user)
@@ -20,11 +31,40 @@ const LoggedHome = () => {
       return true``
     }
   }
+  useEffect(() => {
+    isTokenExpired
+  }, [appToken])
   const [appPass, setAppPass] = useState('')
   const [error, setError] = useState(null)
   const validateAppPassword = (password) => {
     const pattern = /^[a-z]{4} [a-z]{4} [a-z]{4} [a-z]{4}$/;
     return pattern.test(password);
+  }
+  const handleTemplateSubmit = async (e) => {
+    e.preventDefault()
+    if(template.name.split('.').at(-1) !== 'html'){
+      alert(`Invalid template`)
+      setTemplate(null)
+      return
+    }
+    formData.append('template', template)
+    try {
+      const responce = await api.post('/save-template', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      if(responce.data.error){
+        alert(`An error occured, try again`)
+        setTemplate(null)
+        return
+      }
+      alert(`Template Updated`)
+      setTemplate(null)
+      return
+    } catch (error) {
+      alert(`An error occured, try again`)
+      setTemplate(null)
+      return
+    }
   }
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -69,12 +109,26 @@ const LoggedHome = () => {
         {!appToken && <div>
             <h5 className='text-xs mx-[4vw] my-[3vh] font-mono' >Enter your app pass, if you need steps to get your app password scroll down.</h5> 
         </div>}
-        {appToken && <div className='mt-[2vh]'>
-          <Link to='/send-emails'className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Send Mails</Link>
+        {appToken && <div className='flex flex-col gap-2 justify-center items-center'>
+          <div >
+            <Link to='/send-emails'className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white font-thin'>Send Mails</Link>
+          </div>
+          <div className='flex justify-start flex-col text-base items-center'>
+            <input 
+            type="file" 
+            ref={templateInputRef} 
+            style={{ display: 'none' }} 
+            onChange={handleTemplateChange}
+            multiple 
+                />
+            <h1 className='text-base rounded-3xl px-[1vw] py-[0.5vh] bg-black text-white font-thin' onClick={handleClick}>{template?'Template Added':'Add/Update Template'}</h1>
+          </div>
+          {template && <div>
+            <form onSubmit={handleTemplateSubmit}>
+              <button className='text-base rounded-3xl px-[1vw] py-[0.5vh] bg-black text-white font-thin' type='submit'>Send Template</button>
+            </form>
+          </div>}
         </div>}
-        
-        {/* Show guide only when user hasn't provided app password */}
-        {/* {!appToken && <GuideForAppPass />} */}
       </div>
   )
 }

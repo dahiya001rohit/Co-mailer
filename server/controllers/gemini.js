@@ -1,9 +1,10 @@
 const { GoogleGenAI } = require("@google/genai");
-
+const { loadTemplate } = require("./template");
 const genAI = new GoogleGenAI({apiKey: "AIzaSyCZSGFVQX-LFt-0D79CJEqVna9A5yobtL0"});
 
 async function generateHtml(req, res) {
     console.log(1)
+    const template = await loadTemplate()
     const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: "Prompt required" });
 
@@ -11,9 +12,9 @@ async function generateHtml(req, res) {
         const response = await genAI.models.generateContent({
             model: "gemini-2.5-flash-lite",
             contents: `You are an HTML Designer Agent. You are tasked with making HTML responses with proper use of colors, NOT flashy, and a responsive HTML page.
-            
-
-
+            here is the company template ypu need to fill content in it, template: ${template}
+            (if template is null ignore template)
+            fill the template and return filled template as html
             Generate the following two things based on this prompt: "${prompt}"
             1. A professional email subject line.
             2. The full HTML code for the email body.

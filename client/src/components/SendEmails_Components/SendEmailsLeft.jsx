@@ -155,6 +155,9 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     </button>
                 </div>
             </form>
+            {!showUpload && <div className='font-italic text-[0.8vw] font-mono w-8/10 text-center text-red-700'>
+                <p>* For sending files to separate recipients, name each file with the recipient’s email<br />(replace @ with _ and . with _)<br />Example: john_doe_gmail_com_resume.pdf will be sent to john.doe@gmail.com</p>
+            </div>}
         </div>
     )
 }

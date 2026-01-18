@@ -3,6 +3,7 @@ const Users = require('../models/users')
 const { makeToken, makeAppPassToken } = require('./JWT')
 const { encrypt, decrypt} = require('./crypto')
 const { createTransporter } = require('./mailer')
+const { readAndUpdate } = require('./template')
 
 async function signUpUser(req, res) {
     const { name, email, password } = req.body
@@ -111,9 +112,17 @@ async function sendemail(req, res) {
     return res.json({data: `Success`})
 }
 
+async function saveTemplate(req, res){
+    const template = req.file.buffer.toString('utf-8')
+    const responce = await readAndUpdate(template)
+    if(!responce) return res.json({ error: `An error occurred`}) 
+    return res.json({ data: `success`}) 
+}
+
 module.exports = {
     signUpUser,
     logInUser,
     saveAppPass,
     sendemail,
+    saveTemplate
 }
