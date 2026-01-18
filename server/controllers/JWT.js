@@ -1,5 +1,6 @@
 const JWT = require('jsonwebtoken')
 const myJWTSecret = 'co-mailer-jwt-secert'
+const myAppPassJWTSecret = 'co-mailer-App-Pass-jwt-secert'
 function makeToken(user){
     const payload = {
         name: user.name,
@@ -14,7 +15,17 @@ function verifyToken(token){
     return JWT.verify(token, myJWTSecret)
 }
 
+function makeAppPassToken(appPass){
+    return JWT.sign({ appPass }, myAppPassJWTSecret, {
+        expiresIn: '4h'
+    })
+}
+function verifyAppToken(appToken){
+    return JWT.verify(appToken, myAppPassJWTSecret)
+}
 module.exports = {
     makeToken,
-    verifyToken
+    verifyToken,
+    makeAppPassToken,
+    verifyAppToken
 }
