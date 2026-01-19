@@ -36,7 +36,21 @@ async function generateHtml(req, res) {
         });
         
         console.log(2)
-        const data = JSON.parse(response.candidates[0].content.parts[0].text)
+        const raw = response.candidates[0].content.parts[0].text;
+        console.log('Gemini raw response:', raw);
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (err) {
+            // Try to fix bad escapes (replace single backslash with double)
+            try {
+                const safe = raw.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+                data = JSON.parse(safe);
+            } catch (err2) {
+                console.error('Gemini JSON parse error:', err2);
+                return res.status(500).json({ error: 'Gemini returned invalid JSON. See server logs.' });
+            }
+        }
         return res.json(data);
     } catch (error) {
         console.error("Gemini Error:", error);

@@ -11,7 +11,8 @@ const SendEmailsLeft = ({ html, setHtml }) => {
     const fileInputRef = useRef(null)
     const [attachment, setAttachment] = useState(null)
     const [to, setTo] = useState('')
-    const [loading, setLoading] = useState(false);
+    const [loadingGenerate, setLoadingGenerate] = useState(false);
+    const [loadingSend, setLoadingSend] = useState(false);
     const [prompt, setPrompt] = useState('');
     const [subject, setSubject] = useState('');
     const [error, setError] = useState('');
@@ -28,14 +29,14 @@ const SendEmailsLeft = ({ html, setHtml }) => {
     const handleSend = async (e) => {
         e.preventDefault();
         if(!to || !subject || !html || to.trim() === '' || subject.trim() === '') return
-        setLoading(true);
+        setLoadingSend(true);
         try {
             const formData = new FormData()
             formData.append('to', to)
             formData.append('subject', subject)
             formData.append('html', html)
             formData.append('toSeperate', toSeperate)
-            console.log(`Done`);
+            // console.log(`Done`);
 
             if (attachment && attachment.length > 0){
                 attachment.forEach( file => {
@@ -46,17 +47,17 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (response.data.error) {
-                setError(response.data.error);
-                setLoading(false);
-                alert(`An error occurred: ${response.data.error.message}`);
+                setError('Failed to send email: ' + (response.data.error.message || response.data.error));
+                setLoadingSend(false);
+                alert('Failed to send email. Please check your details and try again.');
                 return;
             }
-            console.log(`Done`);
-            setLoading(false);
+            // console.log(`Done`);
+            setLoadingSend(false);
             // setHtml(null);
             // setSubject('');
         } catch (error) {
-            setLoading(false);
+            setLoadingSend(false);
             const errorMessage = error.response?.data?.message || error.message || error;
             setError(errorMessage);
             alert(`An error occurred: ${errorMessage}`);
@@ -65,21 +66,21 @@ const SendEmailsLeft = ({ html, setHtml }) => {
     const handleGenerate = async (e) => {
         e.preventDefault();
         if (!prompt || prompt.trim() === '') return;
-        setLoading(true);
+        setLoadingGenerate(true);
         try {
             const response = await api.post('/gemini', { prompt: prompt });
             if (response.data.error) {
-                setError(response.data.error);
-                setLoading(false);
-                alert(`An error occurred: ${response.data.error}`);
+                setError('Failed to generate email: ' + (response.data.error.message || response.data.error));
+                setLoadingGenerate(false);
+                alert('Failed to generate email. Please try again.');
                 return;
             }
             console.log(`Done`);
-            setLoading(false);
+            setLoadingGenerate(false);
             setHtml(response.data.html);
             setSubject(response.data.subject);
         } catch (error) {
-            setLoading(false);
+            setLoadingGenerate(false);
             const errorMessage = error.response?.data?.message || error.message || error;
             setError(errorMessage);
             alert(`An error occurred: ${errorMessage}`);
@@ -101,9 +102,9 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                     onChange={(e) => setPrompt(e.target.value)}
                 ></textarea>
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800'>
-                        {loading ? <Loading /> : 'Generate'}
-                        {!loading && <SiGooglegemini />}
+                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800' disabled={loadingSend || loadingGenerate}>
+                        {loadingGenerate ? <Loading /> : 'Generate'}
+                        {!loadingGenerate && <SiGooglegemini />}
                     </button>
                 </div>
             </form>
@@ -140,18 +141,19 @@ const SendEmailsLeft = ({ html, setHtml }) => {
                         {attachment && attachment.length !== 0?null:<FileUp size={18} strokeWidth={1} />}
                         <span className='font-mono font-thin'>{attachment && attachment.length !== 0?`${attachment.length} files added`:'Upload'}</span>
                     </h1>
+                    <h1 className='text-[0.8vw] font-mono w-8/10 text-center mt-1 text-red-700'>MAX 100MB</h1>
                 </div>}
                 {showUpload && <div className='flex justify-around item-center mt-[1vh] font-mono text-xs'>
                     <label className='flex justify-around item-center'>
                         <input type="checkbox" className='w-[0.8vw]' checked = {toSeperate} onChange={e => {
                             setToSeperate(e.target.checked)
                         }} />
-                        <h5>To seperate Reciver</h5>
+                        <h5>To separate Receiver</h5>
                     </label>
                 </div>}
                 <div className='flex justify-start flex-col text-base items-center mt-[2vh]'>
-                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer'>
-                        {loading ? <Loading /> : 'Send'}
+                    <button type='submit' className='text-sm flex gap-1 font-thin px-[1vw] py-[0.5vh] text-white bg-black rounded-4xl hover:bg-gray-800 cursor-pointer' disabled={loadingSend || loadingGenerate}>
+                        {loadingSend ? <Loading /> : 'Send'}
                     </button>
                 </div>
             </form>

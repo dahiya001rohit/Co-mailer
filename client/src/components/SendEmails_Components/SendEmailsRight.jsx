@@ -12,8 +12,8 @@ const SendEmailsRight = ({ html, setHtml }) => {
     }, [html]);
 
     useEffect(() => {
-      setHtml(value);
-    }, [value]);
+        setHtml(value);
+    }, [value, setHtml]);
 
     return (
         <div className='w-6/10 h-full flex justify-start flex-col items-center gap-[2vh] mt-2'>

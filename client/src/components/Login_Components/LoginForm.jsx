@@ -72,7 +72,7 @@ const LoginForm = () => {
             </div>
             <div className='w-8/10 font-mono text-[0.7vw]'>
                 <h3 className='text-center'>
-                    We can't acess you'r App password or send emails from our side, you'r Password is safe and end-to-end encrypted
+                    We can't access your App password or send emails from our side, your Password is safe and end-to-end encrypted
                 </h3>
             </div>
         </div>
