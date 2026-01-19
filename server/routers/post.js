@@ -12,7 +12,7 @@ router.route('/login')
 router.route('/save-app-password')
     .post(saveAppPass)
 router.route('/save-template')
-    .post(upload.single('template'), saveTemplate)
+    .post(auth, upload.single('template'), saveTemplate)
 router.route('/send-email')
     .post(auth, appPassAuth, upload.array('attachments'), sendemail)
 

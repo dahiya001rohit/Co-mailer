@@ -1,10 +1,18 @@
 const { GoogleGenAI } = require("@google/genai");
-const { loadTemplate } = require("./template");
+const Templates = require('../models/templates')
 const genAI = new GoogleGenAI({apiKey: "AIzaSyCZSGFVQX-LFt-0D79CJEqVna9A5yobtL0"});
 
 async function generateHtml(req, res) {
     console.log(1)
-    const template = await loadTemplate()
+    const getTemplate = async ( userId ) => {
+        try {
+            return await Templates.findOne({ userId })
+        } catch (error) {
+            return null
+        }
+    }
+    const templateDoc = await getTemplate( req.user._id )
+    const template = templateDoc?templateDoc.template : null
     const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: "Prompt required" });
 

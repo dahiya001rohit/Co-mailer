@@ -3,7 +3,7 @@ const Users = require('../models/users')
 const { makeToken, makeAppPassToken } = require('./JWT')
 const { encrypt, decrypt} = require('./crypto')
 const { createTransporter } = require('./mailer')
-const { readAndUpdate } = require('./template')
+const Template = require('../models/templates');
 
 async function signUpUser(req, res) {
     const { name, email, password } = req.body
@@ -112,11 +112,20 @@ async function sendemail(req, res) {
     return res.json({data: `Success`})
 }
 
-async function saveTemplate(req, res){
-    const template = req.file.buffer.toString('utf-8')
-    const responce = await readAndUpdate(template)
-    if(!responce) return res.json({ error: `An error occurred`}) 
-    return res.json({ data: `success`}) 
+async function saveTemplate(req, res) {
+    if (!req.file) return res.json({ error: 'No file uploaded' });
+    const templateString = req.file.buffer.toString('utf-8');
+    try {
+        await Template.findOneAndUpdate(
+            { userId: req.user._id },
+            { template: templateString },
+            { upsert: true, new: true }
+        );
+        console.log(`updated`)
+        return res.json({ data: 'success' });
+    } catch (err) {
+        return res.json({ error: 'An error occurred' });
+    }
 }
 
 module.exports = {

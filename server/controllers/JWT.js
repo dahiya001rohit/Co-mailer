@@ -3,6 +3,7 @@ const myJWTSecret = 'co-mailer-jwt-secert'
 const myAppPassJWTSecret = 'co-mailer-App-Pass-jwt-secert'
 function makeToken(user){
     const payload = {
+        id: user._id,
         name: user.name,
         email: user.email
     }
