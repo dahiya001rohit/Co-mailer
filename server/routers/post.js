@@ -3,7 +3,7 @@ const { signUpUser, logInUser, sendemail, saveAppPass, saveTemplate } = require(
 const { auth } = require('../middlewares/auth')
 const upload = require('../controllers/multer')
 const { appPassAuth } = require('../middlewares/appPassAuth')
-const router = express()
+const router = express.Router()
 
 router.route('/signup')
     .post(signUpUser)

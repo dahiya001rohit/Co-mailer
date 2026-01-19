@@ -1,6 +1,7 @@
+require('dotenv').config();
 const JWT = require('jsonwebtoken')
-const myJWTSecret = 'co-mailer-jwt-secert'
-const myAppPassJWTSecret = 'co-mailer-App-Pass-jwt-secert'
+const myJWTSecret = process.env.myJWTSecret
+const myAppPassJWTSecret = process.env.myAppPassJWTSecret
 function makeToken(user){
     const payload = {
         id: user._id,

@@ -1,6 +1,7 @@
+require('dotenv').config()
 const { GoogleGenAI } = require("@google/genai");
 const Templates = require('../models/templates')
-const genAI = new GoogleGenAI({apiKey: "AIzaSyCZSGFVQX-LFt-0D79CJEqVna9A5yobtL0"});
+const genAI = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 async function generateHtml(req, res) {
     console.log(1)

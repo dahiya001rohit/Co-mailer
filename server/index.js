@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const cors = require('cors')
 const { connectToMongoDb } = require('./connection')
@@ -7,7 +8,7 @@ const { auth } = require('./middlewares/auth')
 const { generateHtml } = require('./controllers/gemini')
 
 // Connecting Database
-connectToMongoDb('mongodb://127.0.0.1:27017/co-mailer')
+connectToMongoDb(process.env.MONGO_URI)
     .then(() => {
         console.log(`Mongo Connected`)
     })
@@ -26,6 +27,6 @@ app.post('/gemini',auth ,generateHtml)
 app.use('/', postRouter)
 
 
-app.listen(7152, ()=>{
-    console.log('started on port 7152')
+app.listen(process.env.PORT, ()=>{
+    console.log(`started on port: ${process.env.PORT}`)
 })

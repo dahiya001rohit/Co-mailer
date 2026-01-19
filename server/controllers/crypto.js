@@ -1,5 +1,6 @@
+require('dotenv').config()
 const crypto = require('crypto')
-const ENCRYPTION_KEY = 'co-mailer@encrypt#secret$key2026'
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
 const IV_LENGTH = 16
 
 function encrypt(text){

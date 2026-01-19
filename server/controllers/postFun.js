@@ -26,6 +26,7 @@ async function signUpUser(req, res) {
 }
 
 async function logInUser(req, res) {
+    console.log(`here`)
     const { email, password } = req.body
     try {
         const user = await Users.findOne({ email })
@@ -61,7 +62,7 @@ async function sendemail(req, res) {
     const transporter = createTransporter(user.email, appPass)
     console.log({ to, subject, html, files, toSeperate})
 
-    if(toSeperate === 'false'){
+    if(String(toSeparate) === 'false'){
         try{
             console.log(`hi`)
             const sentEmail = await transporter.sendMail({
