@@ -17,7 +17,7 @@ connectToMongoDb(process.env.MONGO_URI)
     });
 
 
-app.use(cors())
+app.use(cors({origin: 'https://co-mailer-1.onrender.com'}))
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.get('/me', auth, (req, res) => {
