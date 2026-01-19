@@ -7,7 +7,6 @@ import { useRef } from 'react'
 import { useEffect } from 'react'
 
 const LoggedHome = () => {
-  const formData = new FormData()
   const templateInputRef = useRef(null)
   const handleClick = () => {
     templateInputRef.current.click()
@@ -47,6 +46,7 @@ const LoggedHome = () => {
       setTemplate(null)
       return
     }
+    const formData = new FormData()
     formData.append('template', template)
     try {
       const responce = await api.post('/save-template', formData, {
@@ -58,8 +58,11 @@ const LoggedHome = () => {
         return
       }
       alert(`Template Updated`)
-      setTemplate(null)
-      return
+      if (templateInputRef.current) {
+        templateInputRef.current.value = "";
+      }
+      setTemplate(null);
+      return;
     } catch (error) {
       alert(`An error occured, try again`)
       setTemplate(null)
@@ -115,12 +118,11 @@ const LoggedHome = () => {
           </div>
           <div className='flex justify-start flex-col text-base items-center'>
             <input 
-            type="file" 
-            ref={templateInputRef} 
-            style={{ display: 'none' }} 
-            onChange={handleTemplateChange}
-            multiple 
-                />
+              type="file" 
+              ref={templateInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleTemplateChange}
+            />
             <h1 className='text-base rounded-3xl px-[1vw] py-[0.5vh] bg-black text-white font-thin' onClick={handleClick}>{template?'Template Added':'Add/Update Template'}</h1>
           </div>
           {template && <div>
