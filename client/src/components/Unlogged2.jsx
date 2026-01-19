@@ -7,39 +7,51 @@ const Unlogged2 = () => {
             {/* Our Services Section */}
             <div className='w-[80vw] flex flex-col items-center'>
                 <h1 className='text-2xl font-mono mb-[3vh]'>Our Services</h1>
-                <div className='w-full flex items-stretch justify-center gap-[2vw]'>
+                <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
                     {/* Service 1: AI Email Generation */}
-                    <div className='w-3/10 bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center'>
+                    <div className='bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center min-h-[320px] min-w-[210px] h-full w-full'>
                         <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4'>
                             <Sparkles className='text-red-400' size={32} />
                         </div>
                         <h2 className='text-lg mb-2'>AI-Powered Generation</h2>
-                        <p className='text-sm font-mono text-gray-600'>
-                            Generate professional HTML emails instantly using Gemini AI. Just describe what you want — get both subject line and beautifully designed email body. No coding required.
+                        <p className='text-xs font-mono text-gray-600'>
+                            Instantly create professional HTML emails with Gemini AI. Just describe your idea—get a subject and a beautiful email, no coding needed.
                         </p>
                     </div>
 
                     {/* Service 2: Bulk Email */}
-                    <div className='w-3/10 bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center'>
+                    <div className='bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center min-h-[320px] min-w-[210px] h-full w-full'>
                         <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4'>
                             <Mail className='text-blue-600' size={32} />
                         </div>
                         <h2 className='text-lg mb-2'>Smart Bulk Emails</h2>
-                        <p className='text-sm font-mono text-gray-600'>
-                            Send to multiple recipients at once with personalized attachments. Our smart matching automatically sends the right file to the right person based on their email.
+                        <p className='text-xs font-mono text-gray-600'>
+                            Send to many at once with personalized attachments. Our smart matching ensures the right file goes to the right person.
                         </p>
                     </div>
 
                     {/* Service 3: Secure SMTP */}
-                    <div className='w-3/10 bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center'>
+                    <div className='bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center min-h-[320px] min-w-[210px] h-full w-full'>
                         <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4'>
                             <Shield className='text-green-600' size={32} />
                         </div>
-                        <h2 className='text-lg mb-2'>Secure SMTP Integration</h2>
-                        <p className='text-sm font-mono text-gray-600'>
-                            Use your own Gmail with App Password. Your credentials are encrypted with AES-256 and auto-expire after 4 hours. Emails sent from YOUR address, not a generic sender.
+                        <h2 className='text-lg mb-2'>Secure SMTP</h2>
+                        <p className='text-xs font-mono text-gray-600'>
+                            Use your own Gmail with encrypted credentials. Emails are sent from your address, not a generic sender.
                         </p>
                     </div>
+
+                    {/* Service 4: Add Your Own Template */}
+                    <div className='bg-white border-[0.5px] p-[2vw] shadow-md hover:shadow-lg transition-shadow flex flex-col items-center text-center min-h-[320px] min-w-[210px] h-full w-full'>
+                        <div className='w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4'>
+                            <Zap className='text-yellow-600' size={32} />
+                        </div>
+                        <h2 className='text-lg mb-2'>Add Your Own Template</h2>
+                        <p className='text-xs font-mono text-gray-600'>
+                            Upload or design your own email templates. Personalize your campaigns with custom layouts and branding—no limits.
+                        </p>
+                    </div>
+
                 </div>
             </div>
 

@@ -2,7 +2,7 @@ import React from 'react'
 
 const SignupText = () => {
   return (
-    <div className='w-2/3 h-full flex justify-center flex-col text-base items-center'>
+    <div className='w-2/3 h-full flex justify-center flex-col text-base items-center text-center'>
       <div>
         <h1 className='text-4xl mx-[2vw]'>You're a <span className='italic'>Click Away</span> From Sending  <span className='italic font-bold'>Professional Emails.</span></h1>
       </div>

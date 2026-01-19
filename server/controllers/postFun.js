@@ -62,7 +62,7 @@ async function sendemail(req, res) {
     const transporter = createTransporter(user.email, appPass)
     console.log({ to, subject, html, files, toSeperate})
 
-    if(String(toSeparate) === 'false'){
+    if(String(toSeperate) === 'false'){
         try{
             console.log(`hi`)
             const sentEmail = await transporter.sendMail({

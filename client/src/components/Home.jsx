@@ -10,7 +10,7 @@ const Home = ({isLogged}) => {
     {!isLogged?
       <div className='w-[80vw] h-[80vh] flex items-start justify-center mx-[10vw] mt-[11vh] gap-[3vw] mb-[9vh]'>
         <HeadingText/>
-        <HeadingImg/>
+        {/* <HeadingImg/> */}
       </div>
     :
       <div className='w-[80vw] h-full flex flex-col items-center justify-center mx-[10vw] mt-[11vh] gap-[3vw] mb-[9vh]'>

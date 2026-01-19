@@ -19,7 +19,7 @@ async function generateHtml(req, res) {
 
     try {
         const response = await genAI.models.generateContent({
-            model: "gemini-2.5-flash-lite",
+            model: "gemini-3-flash-preview",
             contents: `You are an HTML Designer Agent. You are tasked with making HTML responses with proper use of colors, NOT flashy, and a responsive HTML page.
             here is the company template ypu need to fill content in it, template: ${template}
             (if template is null ignore template)
