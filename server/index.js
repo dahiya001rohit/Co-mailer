@@ -6,8 +6,14 @@ const app = express()
 const postRouter = require('./routers/post')
 const { auth } = require('./middlewares/auth')
 const { generateHtml } = require('./controllers/gemini')
+const PORT = process.env.PORT || 7152;
 
 // Connecting Database
+if (!process.env.MONGO_URI) {
+  console.error("Missing MONGO_URI");
+  process.exit(1);
+}
+
 connectToMongoDb(process.env.MONGO_URI)
     .then(() => {
         console.log(`Mongo Connected`)
@@ -17,7 +23,8 @@ connectToMongoDb(process.env.MONGO_URI)
     });
 
 
-app.use(cors({origin: 'https://co-mailer-1.onrender.com'}))
+app.use(cors({ origin: true, credentials: true }));
+
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.get('/me', auth, (req, res) => {
@@ -27,6 +34,7 @@ app.post('/gemini',auth ,generateHtml)
 app.use('/', postRouter)
 
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`started on port: ${process.env.PORT}`)
-})
+
+app.listen(PORT, () => {
+  console.log("started on port:", PORT);
+});
