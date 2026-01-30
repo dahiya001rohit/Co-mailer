@@ -4,7 +4,7 @@ const myJWTSecret = process.env.myJWTSecret
 const myAppPassJWTSecret = process.env.myAppPassJWTSecret
 function makeToken(user){
     const payload = {
-        id: user._id,
+        sub: user.sub,
         name: user.name,
         email: user.email
     }
@@ -16,18 +16,7 @@ function makeToken(user){
 function verifyToken(token){
     return JWT.verify(token, myJWTSecret)
 }
-
-function makeAppPassToken(appPass){
-    return JWT.sign({ appPass }, myAppPassJWTSecret, {
-        expiresIn: '4h'
-    })
-}
-function verifyAppToken(appToken){
-    return JWT.verify(appToken, myAppPassJWTSecret)
-}
 module.exports = {
     makeToken,
     verifyToken,
-    makeAppPassToken,
-    verifyAppToken
 }

@@ -4,8 +4,9 @@ const cors = require('cors')
 const { connectToMongoDb } = require('./connection')
 const app = express()
 const postRouter = require('./routers/post')
-const { auth } = require('./middlewares/auth')
-const { generateHtml } = require('./controllers/gemini')
+const { auth } = require('./middlewares/auth');
+const { getTokens, generateOauthUrl } = require('./utils/google');
+const { googleLogin } = require('./controllers/getFun');
 const PORT = process.env.PORT || 7152;
 
 // Connecting Database
@@ -30,9 +31,17 @@ app.use(express.json())
 app.get('/me', auth, (req, res) => {
     return res.json({ user: req.user })
 })
-app.post('/gemini',auth ,generateHtml)
+// console.log(generateOauthUrl())
 app.use('/', postRouter)
-
+app.get('/login', (req, res) => {
+    try {
+        console.log(generateOauthUrl())
+        return res.json({ url: generateOauthUrl() })
+    } catch (error) {
+        return res.json({ error: error })
+    }
+})
+app.get('/google/auth', googleLogin)
 
 
 app.listen(PORT, () => {

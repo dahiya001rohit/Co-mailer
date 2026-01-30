@@ -36,8 +36,7 @@ const Navbar = ({ isLogged, setIsLogged }) => {
         <Link to='/send-emails' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white'>Send Mails</Link>
       ) : (
         <div className='flex gap-2'>
-          <Link to='/login' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white'>Login</Link>
-          <Link to='/signup' className='text-base rounded-3xl px-[2vw] py-[1vh] bg-black text-white'>Signup</Link>
+          <Link to='/login' className='text-[20px] rounded-3xl px-8 py-2 bg-black text-white font-thin'>Get Started</Link>
         </div>
       )}
     </div>

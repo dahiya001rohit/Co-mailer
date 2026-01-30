@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Unlogged2 from './components/Unlogged2';
-import Signup from './components/Signup';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import api from './utils/api';
@@ -37,7 +36,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home isLogged={isLogged} />} />
         <Route path='/login' element={<Login isLogged={isLogged} />} />
-        <Route path='/signup' element={<Signup isLogged={isLogged} />} />
+        {/* <Route path='/signup' element={<Signup isLogged={isLogged} />} /> */}
         <Route
           path='/send-emails'
           element={

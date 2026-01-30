@@ -1,55 +1,43 @@
-const bcrypt = require('bcrypt')
 const Users = require('../models/users')
-const { makeToken, makeAppPassToken } = require('./JWT')
-const { encrypt, decrypt} = require('./crypto')
-const { createTransporter } = require('./mailer')
+const { decrypt, encrypt} = require('../utils/crypto')
+const transporter = require('../utils/mailer')
 const Template = require('../models/templates');
+const { oauth2Client } = require('../utils/google');
 
-async function signUpUser(req, res) {
-    const { name, email, password } = req.body
-    const isAlreadyUser = await Users.findOne({ email })
-    if (isAlreadyUser) return res.json({error: `User already exist, login`})
-    const hashPass = await bcrypt.hash(password, 10)
+
+const refreshUserToken = async (u) => {
     try {
-        const user = await Users.create({
-            name: name,
-            email: email,
-            password: hashPass 
-        })
-        console.log(user)
-        const token = makeToken(user)
-        console.log(token)
-        return res.json({token: token})
+        oauth2Client.setCredentials({ refresh_token: decrypt(u.encryptedRefreshToken) });
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        u.encryptedAccessToken = encrypt(credentials.access_token);
+        u.accessTokenExpiry = credentials.expiry_date;
+        await u.save();
+        return credentials.access_token;
     } catch (error) {
-        return res.json({ error: `An error occured` })
+        console.error("Error refreshing token:", error);
+        throw error;
     }
-}
+};
 
-async function logInUser(req, res) {
-    console.log(`here`)
-    const { email, password } = req.body
+async function sendMailWithRetry(mailOptions, u, retries = 1) {
     try {
-        const user = await Users.findOne({ email })
-        console.log(user)
-        if(!user) return res.json({ error: `No user, signup` })
-        const isValidPass = await bcrypt.compare(password, user.password)
-        if(!isValidPass) return res.json({ error: `Invalid Password` })
-        const token = makeToken(user)
-        console.log(token)
-        return res.json({token: token})
+        return await transporter.sendMail(mailOptions);
     } catch (error) {
-        return res.json({ error: `An error occured: ${error.message}` })
+        // Check for 535 Authentication credentials invalid
+        if (error.responseCode === 535 && retries > 0) {
+            console.log("Token expired or invalid. Attempting to refresh...");
+            try {
+                const newAccessToken = await refreshUserToken(u);
+                mailOptions.auth.accessToken = newAccessToken; // Update access token in mailOptions
+                console.log("Token refreshed. Retrying email...");
+                return await sendMailWithRetry(mailOptions, u, retries - 1);
+            } catch (refreshError) {
+                console.error("Failed to refresh token during retry:", refreshError);
+                throw error; // Throw original error if refresh fails
+            }
+        }
+        throw error;
     }
-}
-
-async function saveAppPass(req, res) {
-    console.log(`reached`)
-    const { appPass } = req.body
-    encryptedAppPass = encrypt(appPass)
-    console.log(encryptedAppPass)
-    const appToken = makeAppPassToken(encryptedAppPass)
-    console.log(appToken)
-    return res.json({appToken})
 }
 
 async function sendemail(req, res) {
@@ -57,24 +45,36 @@ async function sendemail(req, res) {
     const { to, subject, html, toSeperate} = req.body
     const files = req.files
     const user = req.user
-    const encryptedAppPass = req.encryptedAppPass
-    const appPass = decrypt(encryptedAppPass)
-    const transporter = createTransporter(user.email, appPass)
+    const u = await Users.findOne({ sub: user.sub})
+    console.log(u)
+    
+    // Initial pre-check (optional but good for performance)
+    if (Date.now() > user.accessTokenExpiry) {
+        if (Date.now() < user.refreshTokenExpiry) {
+           await refreshUserToken(u);
+        } else {
+            return res.status(401).json({ error: `Invalid token, login again`})
+        }
+    }
+    
     console.log({ to, subject, html, files, toSeperate})
-
     if(String(toSeperate) === 'false'){
         try{
-            console.log(`hi`)
-            const sentEmail = await transporter.sendMail({
-                from: user.name + ' <' + user.email + '>',
+            const sentEmail = await sendMailWithRetry({
+                from: u.name + ' <' + u.email + '>',
                 to: to,
                 subject: subject,
                 html: html,
                 attachments: files.map(file => ({
                     filename: file.originalname,
                     content: file.buffer,
-                }))
-            })
+                })),
+                auth: {
+                    user: u.email,
+                    refreshToken: decrypt(u.encryptedRefreshToken),
+                    accessToken: decrypt(u.encryptedAccessToken),
+                }
+            }, u);
             console.log(sentEmail)
             return res.json({data: `Success`})
         } catch(err){
@@ -92,19 +92,24 @@ async function sendemail(req, res) {
             const matchFile = files.filter(file => file.originalname.toLowerCase().includes(sanitizedEmail))
 
             try{
-                console.log(`hi`)
-                const sentEmail = await transporter.sendMail({
-                    from: user.name + ' <' + user.email + '>',
+                const sentEmail = await sendMailWithRetry({
+                    from: u.name + ' <' + u.email + '>',
                     to: email,
                     subject: subject,
                     html: html,
                     attachments: matchFile.map(file => ({
                         filename: file.originalname,
                         content: file.buffer,
-                    }))
-                })
-            } catch(err){
-                console.log(err)
+                    })),
+                    auth: {
+                        user: u.email,
+                        refreshToken: decrypt(u.encryptedRefreshToken),
+                        accessToken:decrypt(u.encryptedAccessToken),
+                    }
+                }, u);
+                console.log(sentEmail)
+            } catch(error){
+                console.log(error)
                 return res.json({error: `An error occured`})
             }
         };
@@ -124,15 +129,12 @@ async function saveTemplate(req, res) {
         );
         console.log(`updated`)
         return res.json({ data: 'success' });
-    } catch (err) {
+    } catch (error) {
         return res.json({ error: 'An error occurred' });
     }
 }
 
 module.exports = {
-    signUpUser,
-    logInUser,
-    saveAppPass,
     sendemail,
     saveTemplate
 }
