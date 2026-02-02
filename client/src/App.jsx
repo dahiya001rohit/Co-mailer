@@ -46,6 +46,7 @@ const App = () => {
           }
         />
         <Route path='/about' element={<About/>} />
+        <Route path='/*' element={<Home isLogged={isLogged} />} />
       </Routes>
       {(!isLogged && location.pathname !== '/about' )&& <Unlogged2 />}
       <Footer/>
