@@ -20,7 +20,10 @@ async function googleLogin(req, res) {
             encryptedAccessToken: encrypt(data.access_token),
             accessTokenExpiry: data.expiry_date,
             encryptedRefreshToken: encrypt(data.refresh_token),
-            refreshTokenExpiry: Date.now() + data.refresh_token_expires_in * 1000,
+            rrefreshTokenExpiry: (typeof data.refresh_token_expires_in === 'number' && !isNaN(data.refresh_token_expires_in))? 
+                Date.now() + data.refresh_token_expires_in * 1000
+                :
+                (Date.now() + 7 * 24 * 60 * 60 * 1000)
         }
 
         let user = await Users.findOne({ sub: userData.sub })
