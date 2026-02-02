@@ -47,9 +47,9 @@ async function googleLogin(req, res) {
                 { new: true }
             )
             const token = makeToken(updatedUser)
-            const frontendUrl = `http://localhost:5174/login?token=${token}`;
+            const frontendUrl = `https://co-mailer-1.onrender.com//login?token=${token}`;
             return res.redirect(frontendUrl);
-        }
+        
     } catch (error){
         return res.json({error: error})
     }
