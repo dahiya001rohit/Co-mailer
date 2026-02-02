@@ -5,54 +5,44 @@ const { makeToken } = require('../utils/JWT')
 
 async function googleLogin(req, res) {
     const code = req.query.code
-    try{
+
+    try {
         const data = await getTokens(code)
-        console.log(data)
-        const userPayload = JSON.parse(atob((data.id_token).split('.')[1]))
-        console.log(userPayload)
-        const user = {
-            sub: userPayload.sub,
-            name: userPayload.name,
-            email: userPayload.email,
+
+        const payload = JSON.parse(
+            Buffer.from(data.id_token.split('.')[1], 'base64').toString()
+        )
+
+        const userData = {
+            sub: payload.sub,
+            name: payload.name,
+            email: payload.email,
             encryptedAccessToken: encrypt(data.access_token),
             accessTokenExpiry: data.expiry_date,
             encryptedRefreshToken: encrypt(data.refresh_token),
             refreshTokenExpiry: Date.now() + data.refresh_token_expires_in * 1000,
         }
-        const isAlreadyUser = await Users.findOne({ sub: user.sub })
-        if(!isAlreadyUser){
-            const newUser = await Users.create({
-                sub: user.sub,
-                name: user.name,
-                email: user.email,
-                encryptedAccessToken: user.encryptedAccessToken,
-                accessTokenExpiry: user.accessTokenExpiry,
-                encryptedRefreshToken: user.encryptedRefreshToken,
-                refreshTokenExpiry: user.refreshTokenExpiry
-            })
-            const token = makeToken(newUser)
-            const frontendUrl = `https://co-mailer-1.onrender.com/login?token=${token}`;
-            return res.redirect(frontendUrl);
+
+        let user = await Users.findOne({ sub: userData.sub })
+
+        if (!user) {
+            user = await Users.create(userData)
         } else {
-            const updatedUser = await Users.findOneAndUpdate(
-                {sub: user.sub}, 
-                {
-                    name: user.name,
-                    email: user.email,
-                    encryptedAccessToken: user.encryptedAccessToken,
-                    accessTokenExpiry: user.accessTokenExpiry,
-                    encryptedRefreshToken: user.encryptedRefreshToken,
-                    refreshTokenExpiry: user.refreshTokenExpiry
-                },
+            user = await Users.findOneAndUpdate(
+                { sub: userData.sub },
+                userData,
                 { new: true }
             )
         }
-            const token = makeToken(updatedUser)
-            const frontendUrl = `https://co-mailer-1.onrender.com//login?token=${token}`;
-            return res.redirect(frontendUrl);
-        
-    } catch (error){
-        return res.json({error: error})
+
+        const token = makeToken(user)
+        return res.redirect(
+            `https://co-mailer-1.onrender.com/login?token=${token}`
+        )
+
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ error: error.message })
     }
 }
 
